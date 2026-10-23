@@ -1,0 +1,268 @@
+:root {
+    --bg: #f1f6f4;
+    --ink: #14201f;
+    --teal: #0e4d4a;
+    --teal-2: #1b6b66;
+    --saffron: #f2a93b;
+    --clay: #b54a3a;
+    --line: #c9d9d5;
+    --card: #fff
+}
+
+* {
+    box-sizing: border-box
+}
+
+body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 18px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif
+}
+
+header {
+    background: var(--teal);
+    padding: 14px 20px
+}
+
+.brand {
+    color: #fff;
+    font-weight: 700;
+    font-size: 1.15rem;
+    text-decoration: none
+}
+
+main {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 20px 16px 48px
+}
+
+h1 {
+    font-size: 1.7rem;
+    line-height: 1.25;
+    margin: 8px 0 4px
+}
+
+h2 {
+    font-size: 1.2rem;
+    margin: 24px 0 8px
+}
+
+.sub {
+    color: #3d5551;
+    margin: 0 0 20px
+}
+
+a {
+    color: var(--teal)
+}
+
+.back {
+    display: inline-block;
+    margin-bottom: 8px;
+    font-weight: 600
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px
+}
+
+@media(min-width:640px) {
+    .grid {
+        grid-template-columns: repeat(3, 1fr)
+    }
+}
+
+.organ {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 22px 10px;
+    background: var(--card);
+    border: 2px solid var(--line);
+    border-radius: 18px;
+    text-decoration: none;
+    color: var(--ink);
+    text-align: center
+}
+
+.organ:hover,
+.organ:focus-visible {
+    border-color: var(--teal);
+    outline: 3px solid var(--saffron);
+    outline-offset: 2px
+}
+
+.organ .ico {
+    font-size: 3rem;
+    line-height: 1.2
+}
+
+.organ b {
+    font-size: 1.15rem
+}
+
+.organ small {
+    color: #4b625e
+}
+
+.doc {
+    background: var(--card);
+    border: 2px solid var(--line);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 12px
+}
+
+.doc h3 {
+    margin: 0 0 2px;
+    font-size: 1.2rem
+}
+
+.doc p {
+    margin: 2px 0;
+    color: #3d5551
+}
+
+.doc .row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+    flex-wrap: wrap
+}
+
+.fee {
+    font-weight: 700;
+    font-size: 1.1rem
+}
+
+.btn {
+    display: inline-block;
+    background: var(--teal);
+    color: #fff;
+    border: 0;
+    border-radius: 10px;
+    padding: 12px 20px;
+    font: inherit;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer
+}
+
+.btn:hover {
+    background: var(--teal-2)
+}
+
+.btn:focus-visible,
+.chip:focus-visible,
+input:focus-visible {
+    outline: 3px solid var(--saffron);
+    outline-offset: 2px
+}
+
+.btn:disabled {
+    background: #8aa5a1;
+    cursor: not-allowed
+}
+
+.facts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin: 14px 0
+}
+
+.fact {
+    background: var(--card);
+    border: 2px solid var(--line);
+    border-radius: 12px;
+    padding: 10px 14px
+}
+
+.fact small {
+    display: block;
+    color: #4b625e
+}
+
+.fact b {
+    font-size: 1.1rem
+}
+
+.steps {
+    padding-left: 22px;
+    margin: 0
+}
+
+.chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px
+}
+
+.chip {
+    background: var(--card);
+    border: 2px solid var(--teal);
+    color: var(--teal);
+    border-radius: 10px;
+    padding: 10px 14px;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    min-width: 84px
+}
+
+.chip[aria-pressed="true"] {
+    background: var(--teal);
+    color: #fff
+}
+
+.chip:disabled {
+    border-color: var(--line);
+    color: #8a9a97;
+    background: #e8eeec;
+    cursor: not-allowed;
+    text-decoration: line-through
+}
+
+label {
+    display: block;
+    font-weight: 600;
+    margin: 14px 0 4px
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    font: inherit;
+    border: 2px solid var(--line);
+    border-radius: 10px
+}
+
+.err {
+    background: #fbe9e6;
+    border: 2px solid var(--clay);
+    color: #7a2a1e;
+    padding: 10px 14px;
+    border-radius: 10px
+}
+
+.ok {
+    background: #e3f4e8;
+    border: 2px solid #2f8f55;
+    padding: 16px;
+    border-radius: 12px
+}
+
+.ok h2 {
+    margin-top: 0
+}
+
+.note {
+    color: #3d5551
+}

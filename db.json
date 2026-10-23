@@ -1,0 +1,277 @@
+{
+    "organs": [
+        {
+            "id": "eye",
+            "name": "Eye",
+            "icon": "👁️"
+        },
+        {
+            "id": "kidney",
+            "name": "Kidney",
+            "icon": "🫘"
+        },
+        {
+            "id": "heart",
+            "name": "Heart",
+            "icon": "🫀"
+        },
+        {
+            "id": "bones",
+            "name": "Bones & Joints",
+            "icon": "🦴"
+        },
+        {
+            "id": "skin",
+            "name": "Skin",
+            "icon": "🧴"
+        },
+        {
+            "id": "teeth",
+            "name": "Teeth",
+            "icon": "🦷"
+        }
+    ],
+    "doctors": [
+        {
+            "id": "d1",
+            "organ": "eye",
+            "name": "Dr. Anita Sharma",
+            "qualification": "MBBS, MS (Ophthalmology)",
+            "experience": 12,
+            "fee": 300,
+            "days": [
+                "Mon",
+                "Wed",
+                "Fri"
+            ],
+            "start": "10:00",
+            "end": "13:00",
+            "slot": 20,
+            "languages": [
+                "Urdu",
+                "English"
+            ]
+        },
+        {
+            "id": "d2",
+            "organ": "eye",
+            "name": "Dr. Rakesh Verma",
+            "qualification": "MBBS, DOMS",
+            "experience": 8,
+            "fee": 250,
+            "days": [
+                "Tue",
+                "Thu",
+                "Sat"
+            ],
+            "start": "15:00",
+            "end": "18:00",
+            "slot": 20,
+            "languages": [
+                "Urdu",
+                "English"
+            ]
+        },
+        {
+            "id": "d3",
+            "organ": "kidney",
+            "name": "Dr. Suresh Menon",
+            "qualification": "MD, DM (Nephrology)",
+            "experience": 18,
+            "fee": 700,
+            "days": [
+                "Mon",
+                "Tue",
+                "Thu"
+            ],
+            "start": "09:00",
+            "end": "12:00",
+            "slot": 30,
+            "languages": [
+                "Urdu",
+                "English"
+            ]
+        },
+        {
+            "id": "d4",
+            "organ": "kidney",
+            "name": "Dr. Pooja Nair",
+            "qualification": "MD, DNB (Nephrology)",
+            "experience": 10,
+            "fee": 600,
+            "days": [
+                "Wed",
+                "Fri",
+                "Sat"
+            ],
+            "start": "14:00",
+            "end": "17:00",
+            "slot": 30,
+            "languages": [
+                "Urdu",
+                "English"
+            ]
+        },
+        {
+            "id": "d5",
+            "organ": "heart",
+            "name": "Dr. Amit Kapoor",
+            "qualification": "MD, DM (Cardiology)",
+            "experience": 20,
+            "fee": 800,
+            "days": [
+                "Mon",
+                "Wed",
+                "Fri"
+            ],
+            "start": "10:00",
+            "end": "13:00",
+            "slot": 30,
+            "languages": [
+                "Urdu",
+                "English"
+            ]
+        },
+        {
+            "id": "d6",
+            "organ": "heart",
+            "name": "Dr. Neha Joshi",
+            "qualification": "MBBS, MD (Medicine), Fellowship Cardiology",
+            "experience": 9,
+            "fee": 600,
+            "days": [
+                "Tue",
+                "Thu",
+                "Sat"
+            ],
+            "start": "16:00",
+            "end": "19:00",
+            "slot": 30,
+            "languages": [
+                "Urdu",
+                "English"
+            ]
+        },
+        {
+            "id": "d7",
+            "organ": "bones",
+            "name": "Dr. Harpreet Singh",
+            "qualification": "MBBS, MS (Orthopaedics)",
+            "experience": 15,
+            "fee": 500,
+            "days": [
+                "Mon",
+                "Tue",
+                "Wed",
+                "Thu",
+                "Fri"
+            ],
+            "start": "11:00",
+            "end": "14:00",
+            "slot": 15,
+            "languages": [
+                "Urdu",
+                "English"
+            ]
+        },
+        {
+            "id": "d8",
+            "organ": "bones",
+            "name": "Dr. Kavita Rao",
+            "qualification": "MBBS, DNB (Orthopaedics)",
+            "experience": 7,
+            "fee": 400,
+            "days": [
+                "Sat",
+                "Sun"
+            ],
+            "start": "10:00",
+            "end": "13:00",
+            "slot": 15,
+            "languages": [
+                "Urdu",
+                "English"
+            ]
+        },
+        {
+            "id": "d9",
+            "organ": "skin",
+            "name": "Dr. Imran Khan",
+            "qualification": "MBBS, MD (Dermatology)",
+            "experience": 11,
+            "fee": 350,
+            "days": [
+                "Mon",
+                "Thu",
+                "Sat"
+            ],
+            "start": "10:00",
+            "end": "13:00",
+            "slot": 15,
+            "languages": [
+                "Urdu",
+                "English"
+            ]
+        },
+        {
+            "id": "d10",
+            "organ": "skin",
+            "name": "Dr. Sunita Das",
+            "qualification": "MBBS, DVD",
+            "experience": 6,
+            "fee": 300,
+            "days": [
+                "Tue",
+                "Fri"
+            ],
+            "start": "15:00",
+            "end": "18:00",
+            "slot": 15,
+            "languages": [
+                "Urdu",
+                "English"
+            ]
+        },
+        {
+            "id": "d11",
+            "organ": "teeth",
+            "name": "Dr. Vikram Patel",
+            "qualification": "BDS, MDS (Oral Surgery)",
+            "experience": 13,
+            "fee": 300,
+            "days": [
+                "Mon",
+                "Wed",
+                "Fri",
+                "Sat"
+            ],
+            "start": "10:00",
+            "end": "14:00",
+            "slot": 30,
+            "languages": [
+                "Urdu",
+                "English"
+            ]
+        },
+        {
+            "id": "d12",
+            "organ": "teeth",
+            "name": "Dr. Meera Iyer",
+            "qualification": "BDS",
+            "experience": 5,
+            "fee": 200,
+            "days": [
+                "Tue",
+                "Thu"
+            ],
+            "start": "14:00",
+            "end": "17:00",
+            "slot": 30,
+            "languages": [
+                "Urdu",
+                "English"
+            ]
+        }
+    ],
+    "appointments": []
+}
