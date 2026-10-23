@@ -1,4 +1,4 @@
-import json, os, threading, uuid, datetime
+import json, os, re, threading, uuid, datetime
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import urlparse, parse_qs, unquote
 
@@ -7,6 +7,7 @@ DB_FILE = os.path.join(BASE, "db.json")
 LOCK = threading.Lock()
 DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]  # date.weekday(): Monday = 0
 MAX_DAYS_AHEAD = 14
+PAY_METHODS = ("card", "jazzcash", "easypaisa", "clinic")
 STATIC = {  # the website files this server hands to the browser
     "/": ("index.html", "text/html; charset=utf-8"),
     "/index.html": ("index.html", "text/html; charset=utf-8"),
@@ -16,8 +17,8 @@ STATIC = {  # the website files this server hands to the browser
 
 
 class ApiError(Exception):
-    def __init__(self, code, msg):
-        self.code, self.msg = code, msg
+    def __init__(self, code, msg, key="generic"):
+        self.code, self.msg, self.key = code, msg, key
 
 
 def load():
@@ -34,7 +35,7 @@ def slots_for(doc, date, appts):
     try:
         d = datetime.datetime.strptime(date, "%Y-%m-%d").date()
     except ValueError:
-        raise ApiError(400, "Date must look like 2026-10-25.")
+        raise ApiError(400, "Date must look like 2026-10-25.", "date")
     if DAYS[d.weekday()] not in doc["days"]:
         return []
     sh, sm = map(int, doc["start"].split(":"))
@@ -52,6 +53,56 @@ def digits(s):
     return "".join(c for c in str(s or "") if c.isdigit())
 
 
+def luhn(num):
+    total = 0
+    for i, c in enumerate(reversed(num)):
+        d = int(c)
+        if i % 2 == 1:
+            d *= 2
+            if d > 9:
+                d -= 9
+        total += d
+    return total % 10 == 0
+
+
+def process_payment(pay, fee):
+    """DEMO payment processor.
+
+    It validates the details and pretends the charge succeeded, so the booking flow can be
+    tested end to end. It never stores the card number, expiry or CVV.
+
+    To take real money, replace the body of this function with a call to a payment gateway
+    that is available in Pakistan (for example Safepay, PayFast, 2Checkout or Stripe), using the
+    gateway's hosted checkout or tokenised card fields so card data never touches this server.
+    Keep the secret API keys in environment variables, never in the website files.
+    """
+    method = pay.get("method", "clinic")
+    if method not in PAY_METHODS:
+        raise ApiError(400, "Choose a payment method.", "method")
+    if method == "clinic":
+        return {"method": method, "status": "pay_at_clinic"}
+
+    if method == "card":
+        num = digits(pay.get("cardNumber"))
+        if not (13 <= len(num) <= 19) or not luhn(num):
+            raise ApiError(400, "Enter a valid card number.", "card")
+        if len(str(pay.get("cardName", "")).strip()) < 2:
+            raise ApiError(400, "Enter the name on the card.", "cardname")
+        m = re.fullmatch(r"(\d{2})/(\d{2})", str(pay.get("expiry", "")))
+        today = datetime.date.today()
+        if not m or not (1 <= int(m.group(1)) <= 12) or (2000 + int(m.group(2)), int(m.group(1))) < (today.year, today.month):
+            raise ApiError(400, "Enter a valid expiry date (MM/YY).", "expiry")
+        if not re.fullmatch(r"\d{3,4}", str(pay.get("cvv", ""))):
+            raise ApiError(400, "Enter the 3 or 4 digit CVV.", "cvv")
+        last4 = num[-4:]
+    else:  # jazzcash / easypaisa
+        if not re.fullmatch(r"03\d{9}", digits(pay.get("walletPhone"))):
+            raise ApiError(400, "Enter a valid wallet number starting with 03.", "wallet")
+        last4 = None
+
+    return {"method": method, "status": "paid", "txnId": "TXN" + uuid.uuid4().hex[:8].upper(), "cardLast4": last4}
+
+
 def route(method, path, query, body):
     db = load()
     p = [unquote(x) for x in path.strip("/").split("/")]
@@ -65,13 +116,13 @@ def route(method, path, query, body):
     if method == "GET" and len(p) == 3 and p[0] == "organs" and p[2] == "doctors":
         organ = next((o for o in db["organs"] if o["id"] == p[1]), None)
         if not organ:
-            raise ApiError(404, "This body part was not found.")
+            raise ApiError(404, "This body part was not found.", "organ")
         return 200, {"organ": organ, "doctors": [d for d in db["doctors"] if d["organ"] == organ["id"]]}
 
     if method == "GET" and len(p) >= 2 and p[0] == "doctors":
         doc = next((d for d in db["doctors"] if d["id"] == p[1]), None)
         if not doc:
-            raise ApiError(404, "This doctor was not found.")
+            raise ApiError(404, "This doctor was not found.", "doctor")
         if len(p) == 3 and p[2] == "slots":
             date = query.get("date", [""])[0]
             return 200, {"date": date, "slots": slots_for(doc, date, db["appointments"])}
@@ -81,27 +132,33 @@ def route(method, path, query, body):
         name = str(body.get("patientName", "")).strip()
         phone = digits(body.get("phone"))
         if len(name) < 2:
-            raise ApiError(400, "Enter the patient name.")
-        if len(phone) < 10:
-            raise ApiError(400, "Enter a 10-digit mobile number.")
+            raise ApiError(400, "Enter the patient name.", "name")
+        if not (10 <= len(phone) <= 12):
+            raise ApiError(400, "Enter a valid mobile number.", "phone")
         doc = next((d for d in db["doctors"] if d["id"] == body.get("doctorId")), None)
         if not doc:
-            raise ApiError(404, "This doctor was not found.")
+            raise ApiError(404, "This doctor was not found.", "doctor")
         date, time_ = str(body.get("date", "")), body.get("time")
         today = datetime.date.today()
         try:
             day = datetime.datetime.strptime(date, "%Y-%m-%d").date()
         except ValueError:
-            raise ApiError(400, "Date must look like 2026-10-25.")
+            raise ApiError(400, "Date must look like 2026-10-25.", "date")
         if not (today <= day <= today + datetime.timedelta(days=MAX_DAYS_AHEAD)):
-            raise ApiError(400, f"Choose a date within the next {MAX_DAYS_AHEAD} days.")
+            raise ApiError(400, f"Choose a date within the next {MAX_DAYS_AHEAD} days.", "range")
         slot = next((s for s in slots_for(doc, date, db["appointments"]) if s["time"] == time_), None)
         if not slot:
-            raise ApiError(400, "The doctor does not see patients at this time.")
+            raise ApiError(400, "The doctor does not see patients at this time.", "closed")
         if slot["booked"]:
-            raise ApiError(409, "This time was just taken. Please choose another.")
+            raise ApiError(409, "This time was just taken. Please choose another.", "taken")
+
+        # Charge only after the slot is confirmed free; the whole request runs under LOCK.
+        pay = process_payment(body.get("payment") or {"method": "clinic"}, doc["fee"])
+
         appt = {"id": "APT" + uuid.uuid4().hex[:6].upper(), "doctorId": doc["id"], "date": date, "time": time_,
                 "patientName": name, "phone": phone, "fee": doc["fee"],
+                "paymentMethod": pay["method"], "paymentStatus": pay["status"],
+                "txnId": pay.get("txnId"), "cardLast4": pay.get("cardLast4"),
                 "createdAt": datetime.datetime.now().isoformat()}
         db["appointments"].append(appt)
         save(db)
@@ -110,7 +167,7 @@ def route(method, path, query, body):
     if method == "GET" and p == ["appointments"]:
         phone = digits(query.get("phone", [""])[0])
         if len(phone) < 10:
-            raise ApiError(400, "Enter a 10-digit mobile number.")
+            raise ApiError(400, "Enter a valid mobile number.", "phone")
         return 200, [a for a in db["appointments"] if a["phone"] == phone]
 
     if method == "DELETE" and len(p) == 2 and p[0] == "appointments":
@@ -149,9 +206,9 @@ class Handler(BaseHTTPRequestHandler):
                 code, payload = route(method, url.path, parse_qs(url.query), body)
             self._send(code, payload)
         except ApiError as e:
-            self._send(e.code, {"error": e.msg})
+            self._send(e.code, {"error": e.msg, "key": e.key})
         except Exception as e:
-            self._send(500, {"error": "Server error. Please try again."})
+            self._send(500, {"error": "Server error. Please try again.", "key": "generic"})
             print("Error:", e)
 
     def do_GET(self): self._handle("GET")

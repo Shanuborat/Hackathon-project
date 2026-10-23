@@ -1,18 +1,32 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr">
 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Find a Doctor</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-    <header>
-        <CENTER><a href="#/" class="brand">Clinic Details Finder</a>
+    <header class="topbar">
+        <div class="topbar-in">
+            <a href="#/" class="brand"><span class="logo" aria-hidden="true">✚</span><span id="brandText">Clinic Details
+                    Finder</span></a>
+            <div class="lang" role="group" aria-label="Language">
+                <button type="button" id="langEn" class="lang-btn">English</button>
+                <button type="button" id="langUr" class="lang-btn">اردو</button>
+            </div>
+        </div>
     </header>
-    </CENTER>
     <main id="app"></main>
+    <footer class="foot"><span id="footText"></span></footer>
     <script src="app.js"></script>
 </body>
+
+</html>
