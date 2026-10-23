@@ -37,7 +37,7 @@ const LANG_UR = { Urdu: 'اردو', English: 'انگریزی' };
 
 const STR = {
     en: {
-        brand: 'Clinic Details Finder', foot: 'Book trusted doctors in a few taps.',
+        brand: 'Isra Hospital', tag: 'Caring for you, every day', foot: '© Isra Hospital · Book trusted doctors in a few taps.',
         homeTitle: 'Which part of your body needs a doctor?', homeSub: 'Tap one to see the doctors for it.',
         b1: '12 specialist doctors', b2: 'Online payment', b3: 'Urdu & English',
         doctors: (n) => `${n} doctors`, allParts: '‹ All body parts', organTitle: (n) => `${n} doctors`,
@@ -69,7 +69,7 @@ const STR = {
         e_wallet: 'Enter a valid wallet number starting with 03 (11 digits).', e_generic: 'Something went wrong. Please try again.'
     },
     ur: {
-        brand: 'کلینک معلومات', foot: 'چند ٹیپ میں قابلِ اعتماد ڈاکٹر سے ملاقات بُک کریں۔',
+        brand: 'اسراء ہسپتال', tag: 'ہر روز آپ کی دیکھ بھال', foot: '© اسراء ہسپتال · چند ٹیپ میں قابلِ اعتماد ڈاکٹر سے ملاقات بُک کریں۔',
         homeTitle: 'آپ کے جسم کے کس حصے کے لیے ڈاکٹر چاہیے؟', homeSub: 'کسی ایک پر ٹیپ کریں اور اس کے ڈاکٹر دیکھیں۔',
         b1: '12 ماہر ڈاکٹر', b2: 'آن لائن ادائیگی', b3: 'اردو اور انگریزی',
         doctors: (n) => `${n} ڈاکٹر`, allParts: 'تمام اعضا ›', organTitle: (n) => `${n} کے ڈاکٹر`,
@@ -117,6 +117,8 @@ function applyLang() {
     document.documentElement.dir = lang === 'ur' ? 'rtl' : 'ltr';
     document.getElementById('brandText').textContent = t('brand');
     document.getElementById('footText').textContent = t('foot');
+    const sn = document.getElementById('splashName');
+    if (sn) { sn.textContent = t('brand'); document.getElementById('splashTag').textContent = t('tag'); }
     document.getElementById('langEn').setAttribute('aria-pressed', lang === 'en');
     document.getElementById('langUr').setAttribute('aria-pressed', lang === 'ur');
 }
@@ -243,6 +245,9 @@ async function route() {
         app.innerHTML = `<p class="err">${esc(errMsg(e))}</p><p><a class="back" href="#/">${t('home')}</a></p>`;
     }
     window.scrollTo(0, 0);
+    app.classList.remove('page-out', 'page-in');
+    void app.offsetWidth;
+    app.classList.add('page-in');
 }
 
 // Screen 1: choose a body part
@@ -250,6 +255,7 @@ async function home() {
     const organs = await api('/api/organs');
     app.innerHTML = `
     <section class="hero">
+      <p class="eyebrow">${t('brand')} · ${t('tag')}</p>
       <h1>${t('homeTitle')}</h1>
       <p>${t('homeSub')}</p>
       <div class="badges"><span class="badge">🩺 ${t('b1')}</span><span class="badge">💳 ${t('b2')}</span><span class="badge">🌐 ${t('b3')}</span></div>
@@ -420,6 +426,23 @@ async function doctorView(id) {
     }
 }
 
+// Fade the page out before navigating, then route() fades the next one in
+document.addEventListener('click', (e) => {
+    const a = e.target.closest('a[href^="#/"]');
+    if (!a || e.metaKey || e.ctrlKey || e.shiftKey) return;
+    e.preventDefault();
+    const href = a.getAttribute('href');
+    if (href === location.hash || (href === '#/' && !location.hash)) return;
+    app.classList.add('page-out');
+    setTimeout(() => { location.hash = href; }, 180);
+});
+
 window.addEventListener('hashchange', route);
 applyLang();
 route();
+
+// Intro splash screen
+const splash = document.getElementById('splash');
+if (splash) {
+    setTimeout(() => { splash.classList.add('hide'); setTimeout(() => splash.remove(), 700); }, 2300);
+}
